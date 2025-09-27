@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from typing import List, Dict, Tuple, Any
 from datetime import datetime, date
 import requests
@@ -8,6 +9,8 @@ import io
 from functools import lru_cache
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173"])
+
 
 TREASURY_URL_BASE = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv"
 
