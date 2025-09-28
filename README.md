@@ -42,7 +42,7 @@ Full stack application built in Typescript/React and Python/Flask. Order managem
 
 #### Libraries
 - [flask](https://flask.palletsprojects.com/en/stable/) for web backend
-- [sqlite](https://flask.palletsprojects.com/en/stable/patterns/sqlite3/) for database
+- [sqlite](https://flask.palletsprojects.com/en/stable/patterns/sqlite3/) for database (automatically initialized on startup with data persisted in `backend/orders.db`)
 
 #### API
 - `GET` `/api/yields/treasury?date=<date>`: Request treasury yield data for a specific date. Will use latest previously available date (ie if requesting a weekend date, will return the last Friday's yield data). Uses LRU caching to minimize requests to `treasury.gov`.
