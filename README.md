@@ -46,5 +46,5 @@ Full stack application built in Typescript/React and Python/Flask. Order managem
 
 #### API
 - `GET` `/api/yields/treasury?date=<date>`: Request treasury yield data for a specific date. Will use latest previously available date (ie if requesting a weekend date, will return the last Friday's yield data). Uses LRU caching to minimize requests to `treasury.gov`.
-- `GET` `/api/orders`: Request all orders data in DB, ordered by creation date. Returns `order_id` of new order if successful.
-- `POST` `/api/orders`: Adds new order to DB with data validation.
+- `GET` `/api/orders`: Request all orders data in DB, ordered by creation date.
+- `POST` `/api/orders`: Adds new order to DB with data validation. Returns `order_id` of new order if successful.
