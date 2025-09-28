@@ -5,11 +5,18 @@ Full stack application built in Typescript/React and Python/Flask. Order managem
 ### Features
 
 #### Yield Curve Chart
-![2025-09-28 13 42 08](https://github.com/user-attachments/assets/bf0d0fbb-38e6-4369-a885-46142891c7f5)
+<img src="https://github.com/user-attachments/assets/bf0d0fbb-38e6-4369-a885-46142891c7f5" width="400">
 
 #### Order Form
-![2025-09-28 13 42 32](https://github.com/user-attachments/assets/0e42804a-2aaf-4ad9-b6e2-f5cd035cda5a)
+<img src="https://github.com/user-attachments/assets/0e42804a-2aaf-4ad9-b6e2-f5cd035cda5a" width="400">
+- Uses current day's yield data for each instrument
 
+#### Order Submission
+<img src="https://github.com/user-attachments/assets/b5e69e9c-927a-4644-84f2-6697b27f54f1" width="400">
+- React Query used to automatically refresh order blotter to see new orders
+
+#### Order Blotter
+<img src="https://github.com/user-attachments/assets/0fffc695-4b08-4e5c-a5a3-7637836e0abb" width="400">
 
 
 
