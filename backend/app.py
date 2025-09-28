@@ -7,9 +7,42 @@ from datetime import datetime as dt
 import csv
 import io
 from functools import lru_cache
+import sqlite3
+
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+
+CORS(app, origins=[ "http://localhost:5173"])
+# Database configuration
+DATABASE = 'orders.db'
+
+def get_db_connection():
+    """Get a database connection"""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    """Initialize the database with the orders table"""
+    conn = get_db_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            side TEXT NOT NULL CHECK (side IN ('Buy', 'Sell')),
+            tenor TEXT NOT NULL CHECK (tenor IN ('1M', '1.5M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y')),
+            issuance_type TEXT NOT NULL CHECK (issuance_type IN ('WI', 'OTR', 'OFTR')),
+            quantity INTEGER NOT NULL CHECK (quantity > 0),
+            yield REAL NOT NULL CHECK (yield > 0),
+            notes TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Initialize database on startup
+init_db()
 
 
 TREASURY_URL_BASE = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv"
@@ -188,3 +221,87 @@ def fetch_treasury_yields():
         return jsonify({"error": f"Invalid parameter: {str(ve)}"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# Order CRUD endpoints
+@app.route('/api/orders', methods=['GET'])
+def get_orders():
+    """Get all orders"""
+    try:
+        conn = get_db_connection()
+        orders = conn.execute('''
+            SELECT id, side, tenor, issuance_type, quantity, yield, notes, created_at
+            FROM orders 
+            ORDER BY created_at DESC
+        ''').fetchall()
+        conn.close()
+        
+        return jsonify({
+            "orders": [dict(order) for order in orders],
+            "count": len(orders)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/orders', methods=['POST'])
+def create_order():
+    """Create a new order"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['side', 'tenor', 'issuance_type', 'quantity', 'yield']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+        
+        # Validate data types and values
+        if data['side'] not in ['Buy', 'Sell']:
+            return jsonify({"error": "side must be 'Buy' or 'Sell'"}), 400
+            
+        valid_tenors = ['1M', '1.5M', '2M', '3M', '4M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y']
+        if data['tenor'] not in valid_tenors:
+            return jsonify({"error": f"Invalid tenor. Must be one of: {valid_tenors}"}), 400
+            
+        if data['issuance_type'] not in ['WI', 'OTR', 'OFTR']:
+            return jsonify({"error": "issuance_type must be 'WI', 'OTR', or 'OFTR'"}), 400
+            
+        if not isinstance(data['quantity'], (int, float)) or data['quantity'] <= 0:
+            return jsonify({"error": "quantity must be a positive number"}), 400
+            
+        if not isinstance(data['yield'], (int, float)) or data['yield'] <= 0:
+            return jsonify({"error": "yield must be a positive number"}), 400
+        
+        conn = get_db_connection()
+        cursor = conn.execute('''
+            INSERT INTO orders (side, tenor, issuance_type, quantity, yield, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            data['side'],
+            data['tenor'],
+            data['issuance_type'],
+            data['quantity'],
+            data['yield'],
+            data.get('notes', '')
+        ))
+        
+        order_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            "message": "Order created successfully",
+            "order_id": order_id
+        }), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Allow CORS
+@app.route('/api/<path:_any>', methods=['OPTIONS'])
+def cors_preflight(_any): 
+    return ('', 204)
+  

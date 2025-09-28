@@ -1,14 +1,20 @@
+import type { Order } from "./order";
 
-/** Raw API types from your Flask endpoint */
+export const API_URL = "http://127.0.0.1:5000"
+
 export type YieldMap = Record<string, number>;
-export interface APIDay {
-  date: string;           // "MM/DD/YYYY"
-  yields: YieldMap;       // e.g., { "1 Mo": 565, "2 Yr": 458, ... }
+export type APIDay = {
+  date: string;
+  yields: YieldMap;
 }
-export interface TreasuryResponse {
-  source: string;         // "treasury.gov"
+export type TreasuryResponse = {
   years: string[];
   data: APIDay[];
   count: number;
   date_range: { start_date?: string | null; end_date?: string | null };
+}
+
+export type OrdersResponse = {
+  orders: Order[];
+  count: number;
 }

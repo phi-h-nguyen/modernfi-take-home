@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import type { YieldMap } from "../types/api";
 
-function parseTermToMonths(term: string): number {
+const parseTermToMonths = (term: string): number => {
   // Accepts "1 Mo", "2 Mo", "6 Mo", "1 Yr", "2 Yr", "10 Yr", etc.
   const [numStr, unit] = term.trim().split(/\s+/); // ["1","Mo"] or ["10","Yr"]
   const n = Number(numStr);
@@ -18,15 +18,15 @@ function parseTermToMonths(term: string): number {
   if (/^mo/i.test(unit)) return n; // months
   if (/^yr/i.test(unit)) return n * 12; // years → months
   return NaN;
-}
+};
 
-function shortLabel(term: string): string {
+const shortLabel = (term: string): string => {
   const [numStr, unit] = term.trim().split(/\s+/);
   const suffix = /^mo/i.test(unit) ? "M" : /^yr/i.test(unit) ? "Y" : unit;
   return `${numStr}${suffix}`;
-}
+};
 
-function toChartData(yields: YieldMap) {
+const toChartData = (yields: YieldMap) => {
   return Object.entries(yields)
     .map(([term, bp]) => ({
       term,
@@ -37,7 +37,7 @@ function toChartData(yields: YieldMap) {
     .filter((d) => Number.isFinite(d.months))
     .sort((a, b) => a.months - b.months)
     .map((d) => ({ label: d.label, pct: d.pct })); // recharts rows
-}
+};
 
 export const YieldCurveChart: React.FC<{
   yields: YieldMap;

@@ -1,32 +1,36 @@
-import "./App.css";
 import { OrderBlotter } from "./components/OrderBlotter";
 import { OrderForm } from "./components/OrderForm";
 import { YieldsSection } from "./components/YieldsSection";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  ResizableContainer,
-  useResize,
-  LeftPanel,
-  RightPanel,
-  Resizer,
-} from "./hooks/useResize";
+import { styled } from "@stitches/react";
+import Title from "antd/es/typography/Title";
+import "@ant-design/v5-patch-for-react-19";
+
+const Wrapper = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+});
+
+const Section = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 8,
+});
 
 function App() {
   const queryClient = new QueryClient();
-  const { leftWidth, containerRef, startResizing, resizing } = useResize();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ResizableContainer ref={containerRef} resizing={resizing}>
-        <LeftPanel style={{ width: leftWidth }} padded>
+      <Title>ModernFi Treasury Liquidity</Title>
+      <Wrapper>
+        <Section>
           <YieldsSection />
-        </LeftPanel>
-        <Resizer onMouseDown={startResizing} />
-        <RightPanel padded>
           <OrderForm />
-          <OrderBlotter />
-        </RightPanel>
-      </ResizableContainer>
+        </Section>
+        <OrderBlotter />
+      </Wrapper>
     </QueryClientProvider>
   );
 }

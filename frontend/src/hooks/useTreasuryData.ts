@@ -1,7 +1,5 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import type { TreasuryResponse } from "../types/api";
-
-const API_URL = "http://127.0.0.1:5000"
+import { API_URL, type TreasuryResponse } from "../types/api";
 
 export type UseTreasuryParams = {
   year?: string;
@@ -10,12 +8,7 @@ export type UseTreasuryParams = {
   endDate?: string;
 };
 
-export type UseTreasuryOptions = {
-  staleTime?: number;
-  gcTime?: number;
-};
-
-function buildQueryString(p: UseTreasuryParams): string {
+const buildQueryString = (p: UseTreasuryParams): string => {
   const qs = new URLSearchParams();
   if (p.years?.length) qs.set("years", p.years.join(","));
   else if (p.year) qs.set("year", p.year);
@@ -24,28 +17,27 @@ function buildQueryString(p: UseTreasuryParams): string {
   return qs.toString();
 }
 
-async function fetchTreasuryData(
+const fetchTreasuryData = async (
   params: UseTreasuryParams,
-): Promise<TreasuryResponse> {
+): Promise<TreasuryResponse> => {
   const qs = buildQueryString(params);
-  const url = `${API_URL.replace(/\/$/, "")}/api/yields/treasury${qs ? `?${qs}` : ""}`;
+  const url = `${API_URL}/api/yields/treasury${qs ? `?${qs}` : ""}`;
 
   const res = await fetch(url, { headers: { Accept: "application/json" } });
   const json = await res.json();
   if (!res.ok) {
     throw new Error(json?.error || res.statusText || "Failed to fetch treasury yields");
   }
-  return json as TreasuryResponse;
+  return json;
 }
 
-export function useTreasuryData(
+export const useTreasuryData = (
   params: UseTreasuryParams = {},
-  opts: UseTreasuryOptions = {}
-): UseQueryResult<TreasuryResponse, Error> {
-  const {
-    staleTime = 5 * 60 * 1000,
-    gcTime = 10 * 60 * 1000,
-  } = opts;
+): UseQueryResult<TreasuryResponse, Error> => {
+  // Cache timing options
+  const staleTime = 5 * 60 * 1000;
+  const gcTime = 10 * 60 * 1000;
+
 
   return useQuery<TreasuryResponse, Error>({
     queryKey: ["treasury", JSON.stringify(params)],
