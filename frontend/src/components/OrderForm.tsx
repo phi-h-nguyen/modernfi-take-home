@@ -71,9 +71,7 @@ export const OrderForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data } = useTreasuryData({
-    year: "2025",
-    startDate: lastBusinessDayISO(),
-    endDate: lastBusinessDayISO(),
+    date: lastBusinessDayISO(),
   });
 
   const {
@@ -99,7 +97,7 @@ export const OrderForm = () => {
   const tenor = watch("tenor");
 
   useEffect(() => {
-    const yieldData = data?.data?.[0].yields;
+    const yieldData = data?.yields;
     if (!tenor || !yieldData) return;
     const key = formatTenor(tenor);
     const raw = yieldData[key];
@@ -107,7 +105,7 @@ export const OrderForm = () => {
     if (typeof val === "number" && !Number.isNaN(val)) {
       setValue("yield", val, { shouldValidate: true, shouldDirty: true });
     }
-  }, [tenor, setValue, data?.data]);
+  }, [tenor, setValue, data?.yields]);
 
   const submit = async (vals: OrderFormValues) => {
     setIsSubmitting(true);

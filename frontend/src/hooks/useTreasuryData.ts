@@ -2,18 +2,12 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { API_URL, type TreasuryResponse } from "../types/api";
 
 export type UseTreasuryParams = {
-  year?: string;
-  years?: string[];
-  startDate?: string;
-  endDate?: string;
+  date: string;
 };
 
 const buildQueryString = (p: UseTreasuryParams): string => {
   const qs = new URLSearchParams();
-  if (p.years?.length) qs.set("years", p.years.join(","));
-  else if (p.year) qs.set("year", p.year);
-  if (p.startDate) qs.set("start_date", p.startDate);
-  if (p.endDate) qs.set("end_date", p.endDate);
+  qs.set("date", p.date)
   return qs.toString();
 }
 
@@ -32,7 +26,7 @@ const fetchTreasuryData = async (
 }
 
 export const useTreasuryData = (
-  params: UseTreasuryParams = {},
+  params: UseTreasuryParams,
 ): UseQueryResult<TreasuryResponse, Error> => {
   // Cache timing options
   const staleTime = 5 * 60 * 1000;

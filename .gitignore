@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 .DS_Store
 
 backend/__pycache__/*
+
+backend/orders.db

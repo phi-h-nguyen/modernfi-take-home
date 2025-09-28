@@ -23,7 +23,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Title>ModernFi Treasury Liquidity</Title>
+      <Title>ModernFi Liquidity Desk</Title>
       <Wrapper>
         <Section>
           <YieldsSection />

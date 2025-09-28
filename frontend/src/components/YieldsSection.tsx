@@ -29,9 +29,7 @@ export const YieldsSection = () => {
   const [date, setDate] = useState(getLastBusinessDay());
 
   const { data, isLoading, error } = useTreasuryData({
-    year: date.format("YYYY"),
-    startDate: date.format("YYYY-MM-DD"),
-    endDate: date.format("YYYY-MM-DD"),
+    date: date.format("YYYY-MM-DD"),
   });
 
   const Content = () => {
@@ -41,8 +39,8 @@ export const YieldsSection = () => {
     if (error) {
       return <>Error: {error.message}</>;
     }
-    if (data?.data.length && data.data[0].yields) {
-      return <YieldCurveChart yields={data.data[0].yields} />;
+    if (data?.yields) {
+      return <YieldCurveChart yields={data.yields} />;
     }
     return <>No data available for this day.</>;
   };
