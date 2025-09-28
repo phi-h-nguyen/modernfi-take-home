@@ -4,6 +4,13 @@ Full stack application built in Typescript/React and Python/Flask. Order managem
 
 ### Features
 
+#### Yield Curve Chart
+![2025-09-28 13 42 08](https://github.com/user-attachments/assets/bf0d0fbb-38e6-4369-a885-46142891c7f5)
+
+#### Order Form
+![2025-09-28 13 42 32](https://github.com/user-attachments/assets/0e42804a-2aaf-4ad9-b6e2-f5cd035cda5a)
+
+
 
 
 ## Front-end
